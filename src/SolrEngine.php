@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace ScoutEngines\Solr;
 
+use Exception;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\LazyCollection;
 use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine;
 use Solarium\Client;
+use Solarium\Core\Client\Adapter\Curl;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class SolrEngine extends Engine
 {
@@ -21,8 +25,19 @@ class SolrEngine extends Engine
      *
      * @param Client $client
      */
-    public function __construct(Client $client)
+    public function __construct(Client $client = null)
     {
+        if(!$client) {
+            $client = new Client(
+                new Curl(),
+                new EventDispatcher(),
+                [
+                    'endpoint' => [
+                        'default' => config('scout.solr'),
+                    ],
+                ]
+            );
+        }
         $this->client = $client;
     }
 
@@ -222,4 +237,82 @@ class SolrEngine extends Engine
             return sprintf('%s:"%s"', $key, $value);
         })->values()->all();
     }
+
+
+    /**
+     * Pluck and return the primary keys of the given results.
+     *
+     * This expects the first item of each search item array to be the primary key.
+     *
+     * @param  mixed  $results
+     * @return \Illuminate\Support\Collection
+     */
+//     public function mapIds($results)
+//     {
+//         if (0 === count($results['hits'])) {
+//             return collect();
+//         }
+
+//         $hits = collect($results['hits']);
+
+//         $key = key($hits->first());
+
+//         return $hits->pluck($key)->values();
+//     }
+
+     /**
+     * Create a search index.
+     *
+     * @param  string  $name
+     * @param  array  $options
+     * @return mixed
+     */
+    public function createIndex($name, array $options = [])
+    {
+        $query = $this->client->createQuery('create', $options);
+        $query->setName($name);
+        return $this->client->createCore($query);
+    }
+
+
+    /**
+     * Delete a search index.
+     *
+     * @param  string  $name
+     * @return mixed
+     */
+    public function deleteIndex($name)
+    {
+        $query = $this->client->createQuery('delete');
+        $query->setCore($name);
+        return $this->client->delete($query);
+    }
+
+
+    /**
+     * Map the given results to instances of the given model via a lazy collection.
+     *
+     * @param  \Laravel\Scout\Builder  $builder
+     * @param  mixed  $results
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return \Illuminate\Support\LazyCollection
+     */
+    public function lazyMap(Builder $builder, $results, $model)
+    {
+        if (count($results['hits']) === 0) {
+            return LazyCollection::make($model->newCollection());
+        }
+
+        $objectIds = collect($results['hits'])->pluck($model->getScoutKeyName())->values()->all();
+        $objectIdPositions = array_flip($objectIds);
+
+        return $model->queryScoutModelsByIds(
+            $builder, $objectIds
+        )->cursor()->filter(function ($model) use ($objectIds) {
+            return in_array($model->getScoutKey(), $objectIds);
+        })->sortBy(function ($model) use ($objectIdPositions) {
+            return $objectIdPositions[$model->getScoutKey()];
+        })->values();
+    }
+
 }
