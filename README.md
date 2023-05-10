@@ -78,8 +78,7 @@ Now you can use Laravel Scout as described in the [official documentation](https
 
 ## Solr Installation
 
-
-See the [Solr Install On Centos-Rocky-Alma Linux](https://www.semihyilmaz.com/centos-7-uzerine-solr-kurulumu/) for more information.
+Visit the SOLR website https://solr.apache.org/ to install a SOLR server for your platform
 
 
 ## Security
