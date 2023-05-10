@@ -10,6 +10,8 @@ use Illuminate\Support\LazyCollection;
 use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine;
 use Solarium\Client;
+use Solarium\Core\Client\Adapter\Curl;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class SolrEngine extends Engine
 {
@@ -23,8 +25,19 @@ class SolrEngine extends Engine
      *
      * @param Client $client
      */
-    public function __construct(Client $client)
+    public function __construct(Client $client = null)
     {
+        if(!$client) {
+            $client = new Client(
+                new Curl(),
+                new EventDispatcher(),
+                [
+                    'endpoint' => [
+                        'default' => config('scout.solr'),
+                    ],
+                ]
+            );
+        }
         $this->client = $client;
     }
 
@@ -224,8 +237,8 @@ class SolrEngine extends Engine
             return sprintf('%s:"%s"', $key, $value);
         })->values()->all();
     }
-    
-    
+
+
     /**
      * Pluck and return the primary keys of the given results.
      *
@@ -246,7 +259,7 @@ class SolrEngine extends Engine
 
 //         return $hits->pluck($key)->values();
 //     }
-    
+
      /**
      * Create a search index.
      *
@@ -260,8 +273,8 @@ class SolrEngine extends Engine
         $query->setName($name);
         return $this->client->createCore($query);
     }
-    
-    
+
+
     /**
      * Delete a search index.
      *
@@ -274,8 +287,8 @@ class SolrEngine extends Engine
         $query->setCore($name);
         return $this->client->delete($query);
     }
-    
-    
+
+
     /**
      * Map the given results to instances of the given model via a lazy collection.
      *
