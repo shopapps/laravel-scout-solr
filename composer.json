@@ -1,20 +1,20 @@
 {
-    "name": "semihyilmaz/laravel-scout-solr",
+    "name": "shopapps/laravel-scout-solr",
     "type": "library",
     "description": "Solr Driver for Laravel Scout",
     "keywords": ["laravel", "scout", "solr"],
-    "homepage": "https://github.com/semihyilmaz/laravel-scout-solr",
+    "homepage": "https://github.com/shopapps/laravel-scout-solr",
     "license": "MIT",
     "authors": [
         {
-            "name": "Semih Yilmaz",
-            "email": "semy@semihyilmaz.com",
-            "homepage": "https://semihyilmaz.com",
+            "name": "Paul Robbins",
+            "email": "paul@shopapps.co.uk",
+            "homepage": "https://shopapps.co.uk",
             "role": "Developer"
         }
     ],
     "require": {
-        "php": "^8.1",
+        "php": "^8.1|^8.2",
         "laravel/scout": "^10.0",
         "solarium/solarium": "^6.1"
     },
