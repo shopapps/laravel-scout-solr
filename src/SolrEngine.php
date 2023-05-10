@@ -234,18 +234,18 @@ class SolrEngine extends Engine
      * @param  mixed  $results
      * @return \Illuminate\Support\Collection
      */
-    public function mapIds($results)
-    {
-        if (0 === count($results['hits'])) {
-            return collect();
-        }
+//     public function mapIds($results)
+//     {
+//         if (0 === count($results['hits'])) {
+//             return collect();
+//         }
 
-        $hits = collect($results['hits']);
+//         $hits = collect($results['hits']);
 
-        $key = key($hits->first());
+//         $key = key($hits->first());
 
-        return $hits->pluck($key)->values();
-    }
+//         return $hits->pluck($key)->values();
+//     }
     
      /**
      * Create a search index.
