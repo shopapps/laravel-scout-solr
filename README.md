@@ -17,7 +17,7 @@ Install [Laravel Scout](https://laravel.com/docs/10.x/scout.
 Install via Composer
 
 ``` bash
-$ composer require semihyilmaz/laravel-scout-solr
+$ composer require shopapps/laravel-scout-solr
 ```
 
 Set your SCOUT_DRIVER to solr:
