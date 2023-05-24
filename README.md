@@ -1,3 +1,16 @@
+# NOTE: I NO LONGER USE THIS PLEASE TRY laravel-scout-solr-engine INSTEAD
+
+https://github.com/shopapps/laravel-scout-solr-engine
+
+
+
+
+
+
+
+
+
+
 # Solr Driver for Laravel Scout
 Solr driver for Laravel Scout. (Updated for Laravel 10)
 ## Documentation
